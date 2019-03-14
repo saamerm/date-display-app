@@ -35,10 +35,10 @@ podTemplate(label: label, containers: [
       container('docker') {
         withCredentials([[$class: 'UsernamePasswordMultiBinding',
           credentialsId: 'dockerhub',
-          usernameVariable: 'DOCKER_HUB_USER',
-          passwordVariable: 'DOCKER_HUB_PASSWORD']]) {
+          usernameVariable: 'admin',
+          passwordVariable: 'cqfqo09ONa']]) {
           sh """
-            docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASSWORD}
+            docker login -u admin -p cqfqo09ONa
             docker build -t namespace/my-image:${gitCommit} .
             docker push namespace/my-image:${gitCommit}
             """
