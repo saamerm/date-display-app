@@ -41,7 +41,7 @@ volumes: [
         sh """
         #kubectl run dockerimageapp --image=saamerm/date-display-app
         #kubectl run dockerimageapp --image=saamerm/date-display-app --serviceaccount jenkins-team6
-        kubectl run dockerimageapp --image=saamerm/date-display-app
+        kubectl run dockerinmageahpp --image=saamerm/date-display-app
            """
       }
   }
