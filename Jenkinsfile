@@ -1,8 +1,12 @@
 def label = "worker-${UUID.randomUUID().toString()}"
 
 podTemplate(label: label, containers: [
-  containerTemplate(name: 'npm', image: 'node:carbon-jessie', command: 'cat', ttyEnabled: true)
-]) {
+  containerTemplate(name: 'npm', image: 'node:carbon-jessie', command: 'cat', ttyEnabled: true),
+  containerTemplate(name: 'docker', image: 'docker', command: 'cat', ttyEnabled: true),
+],
+volumes: [
+  hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')
+]){
   node(label) {
     def myRepo = checkout scm
     def gitCommit = myRepo.GIT_COMMIT
@@ -10,40 +14,27 @@ podTemplate(label: label, containers: [
     def shortGitCommit = "${gitCommit[0..10]}"
     def previousGitCommit = sh(script: "git rev-parse ${gitCommit}~", returnStdout: true)
 
-    stage('Test') {
-      try {
-        container('npm') {
+    sh('ls -lah')
+
+    container('npm') {
           sh """
-            pwd
-            echo "GIT_BRANCH=${gitBranch}" >> /etc/environment
-            echo "GIT_COMMIT=${gitCommit}" >> /etc/environment
-            #npm test
+            ls -lah
+            npm install
+            npm test
             """
-        }
-      }
-      catch (exc) {
-        println "Failed to test - ${currentBuild.fullDisplayName}"
-        throw(exc)
-      }
     }
-    stage('Build') {
-      container('npm') {
-        sh "npm install"
-      }
-    }
-    stage('Create Docker images') {
-      container('docker') {
+    container('docker') {
         withCredentials([[$class: 'UsernamePasswordMultiBinding',
           credentialsId: 'dockerhub',
-          usernameVariable: 'admin',
-          passwordVariable: 'cqfqo09ONa']]) {
+          usernameVariable: 'DOCKER_HUB_USER',
+          passwordVariable: 'DOCKER_HUB_PASSWORD']]) {
           sh """
-            docker login -u admin -p cqfqo09ONa
-            docker build -t namespace/my-image:${gitCommit} .
-            docker push namespace/my-image:${gitCommit}
+            docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASSWORD}
+            docker build -t saamerm/date-display-app:${gitCommit} .
+            docker push saamerm/date-display-app:${gitCommit}
             """
         }
       }
-    }
+
   }
 }
