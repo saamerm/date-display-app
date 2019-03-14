@@ -32,8 +32,8 @@ volumes: [
           passwordVariable: 'DOCKER_HUB_PASSWORD']]) {
           sh """
             docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASSWORD}
-            docker build -t saamerm/date-display-app:${gitCommit} .
-            docker push saamerm/date-display-app:${gitCommit}
+            docker build -t saamerm/date-display-app .
+            docker push saamerm/date-display-app
             """
         }
       }
