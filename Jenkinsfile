@@ -39,9 +39,9 @@ volumes: [
       }
       container('kubectl'){
         sh """
-        #kubectl run dockerimageApp --image=saamerm/date-display-app
-        #kubectl run dockerimageApp --image=saamerm/date-display-app --serviceaccount jenkins-team6
-        kubectl run dockerimageApp --image=saamerm/date-display-app
+        #kubectl run dockerimageapp --image=saamerm/date-display-app
+        #kubectl run dockerimageapp --image=saamerm/date-display-app --serviceaccount jenkins-team6
+        kubectl run dockerimageapp --image=saamerm/date-display-app
            """
       }
   }
